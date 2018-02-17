@@ -10,4 +10,3 @@ User Story:
 - I can choose whether I want to play as X or O.
 
 First time that I had to design a game where the computer does not behave randomly, but efficiently. 
-

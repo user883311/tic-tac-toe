@@ -70,8 +70,8 @@ function machineNextMove(grid, XorO) {
 function lookForCombinationsOnGrid(grid, ...args) {
     /* This function looks for a linear sequence of elements (x, o, undefined) 
     on the grid. 
-    It returns an array of all beginning and ending coordinates for the 
-    corresponding pattern. 
+    It returns an array of all beginning and ending coordinates (x, y) for 
+    the corresponding pattern. 
     Inputs:
     - grid, a system of coordinates with an x-axis and an inverted y-axis.   
     - numbers (0s and 1s). 
@@ -95,7 +95,7 @@ function lookForCombinationsOnGrid(grid, ...args) {
             }
             if (testedArr.join() === sequence.join()) {
                 let start = [j, i];
-                let end = [j + sequence.length, i];
+                let end = [j + sequence.length - 1, i];
                 result1.push([start, end]);
             }
         }
@@ -108,11 +108,11 @@ function lookForCombinationsOnGrid(grid, ...args) {
         for (j = 0; j <= grid.length - sequence.length; j++) {
             testedArr = [];
             for (k = 0; k < sequence.length; k++) {
-                testedArr.push(grid[j+k][i]);
+                testedArr.push(grid[j + k][i]);
             }
             if (testedArr.join() === sequence.join()) {
                 let start = [i, j];
-                let end = [i, j + sequence.length];
+                let end = [i, j + sequence.length - 1];
                 result2.push([start, end]);
             }
         }
@@ -121,11 +121,45 @@ function lookForCombinationsOnGrid(grid, ...args) {
 
     // Look for this combination diagonally. 
     let result3 = [];
+    for (i = 0; i <= grid.length - sequence.length; i++) {
+        for (j = 0; j <= grid[i].length - sequence.length; j++) {
+            testedArr = [];
+            for (k = 0; k < sequence.length; k++) {
+                testedArr.push(grid[i + k][j + k]);
+            }
+            if (testedArr.join() === sequence.join()) {
+                let start = [j, i];
+                let end = [j + sequence.length - 1, i + sequence.length - 1];
+                result3.push([start, end]);
+            }
+        }
+    }
+    console.log("Found", result3.length, "results diagonally (left to right). ");
 
+    // and diagonally the other way... 
+    let result4 = [];
+    for (i = 0; i <= grid.length - sequence.length; i++) { // line i = 0
+        for (j = grid[i].length-1 ; j >= 0 + sequence.length-1; j--) { // column j = 1
+            testedArr = [];
+            for (k = 0; k < sequence.length; k++) {
+                testedArr.push(grid[i + k][j - k]); // + 1 line to i, -1 col to j
+            }
+            if (testedArr.join() === sequence.join()) {
+                let start = [j, i];
+                let end = [j - sequence.length + 1, i + sequence.length - 1];
+                result4.push([start, end]);
+            }
+        }
+    }
+    console.log("Found", result4.length, "results diagonally (right to left). ");
 
-    return result3;
+    let result = result1.concat(result2);
+    result = result.concat(result3);
+    result = result.concat(result4);
+
+    return result;
 }
-grid = [[1, 4, 1],
-[6, 5, 1],
-[3, 1, 1]];
-console.log(lookForCombinationsOnGrid(grid, 1, 1, ));
+grid = [[1, 1, 3],
+        [1, 1, 1],
+        [0, 1, 1]];
+console.log(lookForCombinationsOnGrid(grid, 1, 1 ));
