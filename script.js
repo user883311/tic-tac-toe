@@ -66,39 +66,51 @@ function machineNextMove(grid, XorO) {
     Optimization: there are 8 winning strategies, according to the combinatorics done by
     Crowley and Spiegler in 1993. 
     */
-    let result = [];
+    let out;
 
     /* Strategy #1: win. If there is a row, column or diagonal with 2 of my pieces
     and a blank space, then play the blank space. */
-    let comb1 = lookForCombinationsOnGrid(grid, undefined, XorO, XorO);
-    let comb2 = lookForCombinationsOnGrid(grid, XorO, undefined, XorO);
-    let comb3 = lookForCombinationsOnGrid(grid, XorO, XorO, undefined);
-    let comb = comb1.concat(comb2).concat(comb3);
 
-    if (comb.length > 0) {
-        console.log("Strategy #1 applies. There are", comb.length, "options. ");
 
-        let r = returnsRandomIntInRange(0, comb.length - 1);
-        let a = comb[r]; // pattern chosen
+    // let comb1 = lookForCombinationsOnGrid(grid, undefined, XorO, XorO);
+    // let comb2 = lookForCombinationsOnGrid(grid, XorO, undefined, XorO);
+    // let comb3 = lookForCombinationsOnGrid(grid, XorO, XorO, undefined);
+    // let comb = comb1.concat(comb2).concat(comb3);
 
-        let undefinedPos;
-        if (r < comb1.length) { undefinedPos = 0 }
-        else if (r < comb1.concat(comb2).length) { undefinedPos = 1 }
-        else { undefinedPos = 2 }
+    // if (comb.length > 0) {
+    //     console.log("Strategy #1 applies. There are", comb.length, "options. ");
 
-        if (undefinedPos === 0) {
-            return [a[0][0], a[0][1]];
-        }
-        else if (undefinedPos === 1) {
-            return middlePoint(a[0], a[1]);
-        }
-        else if (undefinedPos === 2) {
-            return [a[1][0], a[1][1]];
-        }
+    //     let r = returnsRandomIntInRange(0, comb.length - 1);
+    //     let a = comb[r]; // pattern chosen
+
+    //     let undefinedPos;
+    //     if (r < comb1.length) { undefinedPos = 0 }
+    //     else if (r < comb1.concat(comb2).length) { undefinedPos = 1 }
+    //     else { undefinedPos = 2 }
+
+    //     if (undefinedPos === 0) {
+    //         return [a[0][0], a[0][1]];
+    //     }
+    //     else if (undefinedPos === 1) {
+    //         return middlePoint(a[0], a[1]);
+    //     }
+    //     else if (undefinedPos === 2) {
+    //         return [a[1][0], a[1][1]];
+    //     }
+    // }
+
+    // --------------
+    out = applyWinStrategy(grid, XorO);
+    
+    if(out === undefined){
+        console.log("Strategy #1 could not be applied. ");
+        console.log("--------------------------------- ");
     }
+    else{return out}
+
+    console.log("--------------------------------- ");
     console.log("Strategy #1 could not be applied. ");
     console.log("--------------------------------- ");
-
 
     /* Strategy #2: block. If there is a row, column or diagonal with 2 of my 
     opponent's pieces and a blank space, then play the blank space. */
@@ -113,6 +125,7 @@ function machineNextMove(grid, XorO) {
     comb2 = lookForCombinationsOnGrid(grid, undefined, XorO, undefined);
     comb3 = lookForCombinationsOnGrid(grid, undefined, undefined, XorO);
     comb = comb1.concat(comb2).concat(comb3);
+    // comb = comb2.concat(comb3);
 
     if (comb.length > 1) {
         let points = [];
@@ -127,8 +140,8 @@ function machineNextMove(grid, XorO) {
         var uniq = duplicateValues(points);
         let blanks = [];
         for (i = 0; i < uniq.length; i++) {
-            if(grid[uniq[i][0]][uniq[i][1]] === undefined){
-                blanks.push([uniq[i][0],uniq[i][1]]);
+            if (grid[uniq[i][1]][uniq[i][0]] === undefined) {
+                blanks.push([uniq[i][1], uniq[i][0]]);
             }
         }
         // pick one intersection at random
@@ -140,9 +153,9 @@ function machineNextMove(grid, XorO) {
     console.log("--------------------------------- ");
 
 
-    return result;
+    // return out;
 }
-grid = [[undefined, "x", undefined],
+grid = [[undefined, "x", "x"],
 [undefined, "o", undefined],
 ["x", undefined, undefined]];
 console.log(machineNextMove(grid, "x"));
@@ -251,115 +264,6 @@ function returnsRandomIntInRange(start, end) {
 }
 // console.log(returnsRandomIntInRange(0, 5));
 
-function pickRandomArrElement(arr) {
-    if (arr.length === 0) { return undefined };
-
-    let r = Math.random() * (arr.length);
-    return arr[r.toString()[0]];
-}
-// console.log(pickRandomArrElement(["a", "v", "c", "d"]));
-
-function combinationsCoordinatesOnGrid(grid, ...args) {
-    /* This function looks for a linear sequence of elements (x, o, undefined) 
-    on the grid. 
-    It returns an array of the pairs of each elements paired with their resp. 
-    beginning and ending coordinates (x, y). 
-
-    Inputs:
-    - grid, a system of coordinates with an x-axis and an inverted y-axis.   
-    - elements can be any sort of built-in objects.  
-
-    Returns: a collection where each item is [[element coordinates], 'type'].
-    */
-
-    let sequence = [];
-    sequence.push(args[0]);
-    args.reduce(function (accumulator, currentValue, currentIndex, args) {
-        return sequence.push(currentValue);
-    });
-    console.log("sequence =", sequence);
-
-    let testedArr;
-    // Look for this combination horizontally. 
-    let result1 = [];
-    for (i = 0; i < grid.length; i++) {
-        for (j = 0; j <= grid[i].length - sequence.length; j++) {
-            testedArr = [];
-            for (k = 0; k < sequence.length; k++) {
-                testedArr.push(grid[i][j + k]);
-            }
-            if (testedArr.join() === sequence.join()) {
-                let start = [j, i];
-                let end = [j + sequence.length - 1, i];
-                result1.push([start, end]);
-            }
-        }
-    }
-    console.log("Found", result1.length, "results horizontally. ");
-
-    // Look for this combination vertically. 
-    let result2 = [];
-    for (i = 0; i < grid[0].length; i++) {
-        for (j = 0; j <= grid.length - sequence.length; j++) {
-            testedArr = [];
-            for (k = 0; k < sequence.length; k++) {
-                testedArr.push(grid[j + k][i]);
-            }
-            if (testedArr.join() === sequence.join()) {
-                let start = [i, j];
-                let end = [i, j + sequence.length - 1];
-                result2.push([start, end]);
-            }
-        }
-    }
-    console.log("Found", result2.length, "results vertically. ");
-
-    // Look for this combination diagonally. 
-    let result3 = [];
-    for (i = 0; i <= grid.length - sequence.length; i++) {
-        for (j = 0; j <= grid[i].length - sequence.length; j++) {
-            testedArr = [];
-            for (k = 0; k < sequence.length; k++) {
-                testedArr.push(grid[i + k][j + k]);
-            }
-            if (testedArr.join() === sequence.join()) {
-                let start = [j, i];
-                let end = [j + sequence.length - 1, i + sequence.length - 1];
-                result3.push([start, end]);
-            }
-        }
-    }
-    console.log("Found", result3.length, "results diagonally (left to right). ");
-
-    // and diagonally the other way... 
-    let result4 = [];
-    for (i = 0; i <= grid.length - sequence.length; i++) { // line i = 0
-        for (j = grid[i].length - 1; j >= 0 + sequence.length - 1; j--) { // column j = 1
-            testedArr = [];
-            for (k = 0; k < sequence.length; k++) {
-                testedArr.push(grid[i + k][j - k]); // + 1 line to i, -1 col to j
-            }
-            if (testedArr.join() === sequence.join()) {
-                let start = [j, i];
-                let end = [j - sequence.length + 1, i + sequence.length - 1];
-                result4.push([start, end]);
-            }
-        }
-    }
-    console.log("Found", result4.length, "results diagonally (right to left). ");
-
-    let result = result1.concat(result2);
-    result = result.concat(result3);
-    result = result.concat(result4);
-
-    return result;
-}
-// grid = [[1, 1, 3],
-// [1, 1, 1],
-// [1, 1, 1],
-// [0, 1, 1]];
-// console.log(combinationsCoordinatesOnGrid(grid, 1, 1, 1, 0));
-
 
 function middlePoint(arrCoord1, arrCoord2) {
     /* This function takes 2 pairs of coordinates in the form of arrays. 
@@ -405,3 +309,35 @@ function duplicateValues(arr) {
 // [0, 2],
 // [1, 1]];
 // console.log(duplicateValues(a));
+
+
+function applyWinStrategy(grid, XorO) {
+
+    let comb1 = lookForCombinationsOnGrid(grid, undefined, XorO, XorO);
+    let comb2 = lookForCombinationsOnGrid(grid, XorO, undefined, XorO);
+    let comb3 = lookForCombinationsOnGrid(grid, XorO, XorO, undefined);
+    let comb = comb1.concat(comb2).concat(comb3);
+
+    if (comb.length > 0) {
+        console.log("Strategy #1 (win) applies. There are", comb.length, "options. ");
+
+        let r = returnsRandomIntInRange(0, comb.length - 1);
+        let a = comb[r]; // pattern chosen
+
+        let undefinedPos;
+        if (r < comb1.length) { undefinedPos = 0 }
+        else if (r < comb1.concat(comb2).length) { undefinedPos = 1 }
+        else { undefinedPos = 2 }
+
+        if (undefinedPos === 0) {
+            return [a[0][0], a[0][1]];
+        }
+        else if (undefinedPos === 1) {
+            return middlePoint(a[0], a[1]);
+        }
+        else if (undefinedPos === 2) {
+            return [a[1][0], a[1][1]];
+        }
+    }
+    return undefined;
+}
