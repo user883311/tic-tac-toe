@@ -123,18 +123,18 @@ function machineNextMove(grid, XorO) {
         (#4a) If there is an empty location that creates a two-in-o-row for me (thus
         forcing my opponent to block rather than fork),
         Then move to the location.*/
-        out = applyCreate2inRowStrategy(grid, OorX);
-        if (out === undefined) {
-            console.log("--------------------------------- ");
-            console.log("Strategy #4a could not be applied. ");
-            console.log("--------------------------------- ");
-        }
-        else {
-            console.log("--------------------------------- ");
-            console.log("Strategy #4a could be applied. ");
-            console.log("--------------------------------- ");
-            return out;
-        }
+    out = applyCreate2inRowStrategy(grid, XorO);
+    if (out === undefined) {
+        console.log("--------------------------------- ");
+        console.log("Strategy #4a could not be applied. ");
+        console.log("--------------------------------- ");
+    }
+    else {
+        console.log("--------------------------------- ");
+        console.log("Strategy #4a could be applied. ");
+        console.log("--------------------------------- ");
+        return out;
+    }
 
 
     /* (#4b)Else move to the Intersection space (thus occupying the location that my
@@ -152,11 +152,88 @@ function machineNextMove(grid, XorO) {
         return out;
     }
 
-    // return out;
+    /* Strategy #5: play center. If the center is blank, then play the center. */
+
+    if (grid[1][1] === undefined) { out = [1, 1] }
+    else (out = undefined)
+    if (out === undefined) {
+        console.log("--------------------------------- ");
+        console.log("Strategy #5 could not be applied. ");
+        console.log("--------------------------------- ");
+    }
+    else {
+        console.log("--------------------------------- ");
+        console.log("Strategy #5 could be applied. ");
+        console.log("--------------------------------- ");
+        return out;
+    }
+
+    /* Strategy #6: play opposite corner. If my opponent is in a corner, and
+        If the opposite corner is empty,
+        Then play the opposite corner. */
+    let can = [];
+    if (grid[0][0] === OorX && grid[2][2] === undefined) { can.push([2, 2]) }
+    else if (grid[0][2] === OorX && grid[2][0] === undefined) { can.push([0, 2]) }
+    else if (grid[2][0] === OorX && grid[0][2] === undefined) { can.push([2, 0]) }
+    else if (grid[2][2] === OorX && grid[0][0] === undefined) { can.push([0, 0]) }
+
+    if (can.length === 0) {
+        console.log("--------------------------------- ");
+        console.log("Strategy #6 could not be applied. ");
+        console.log("--------------------------------- ");
+    }
+    else {
+        console.log("--------------------------------- ");
+        console.log("Strategy #6 could be applied. ");
+        console.log("--------------------------------- ");
+        return can[returnsRandomIntInRange(0, can.length - 1)];
+    }
+
+    /* Strategy #7: play empty corner. If there is an empty corner, then 
+    move to an empty corner. */
+    can = [];
+    if (grid[0][0] === undefined) { can.push([0, 0]) }
+    else if (grid[0][2] === undefined) { can.push([2, 0]) }
+    else if (grid[2][0] === undefined) { can.push([2, 0]) }
+    else if (grid[2][2] === undefined) { can.push([2, 2]) }
+
+    if (can.length === 0) {
+        console.log("--------------------------------- ");
+        console.log("Strategy #7 could not be applied. ");
+        console.log("--------------------------------- ");
+    }
+    else {
+        console.log("--------------------------------- ");
+        console.log("Strategy #7 could be applied. ");
+        console.log("--------------------------------- ");
+        return can[returnsRandomIntInRange(0, can.length - 1)];
+    }
+    /* Strategy #8: play empty side. If there is an empty side, then 
+    move to an empty side. */
+    can = [];
+    if (grid[0][1] === undefined) { can.push([1, 0]) }
+    else if (grid[1][0] === undefined) { can.push([0, 1]) }
+    else if (grid[1][2] === undefined) { can.push([2, 1]) }
+    else if (grid[2][1] === undefined) { can.push([1, 2]) }
+    else { out = undefined }
+
+    if (can.length === 0) {
+        console.log("--------------------------------- ");
+        console.log("Strategy #8 could not be applied. ");
+        console.log("--------------------------------- ");
+    }
+    else {
+        console.log("--------------------------------- ");
+        console.log("Strategy #8 could be applied. ");
+        console.log("--------------------------------- ");
+        return can[returnsRandomIntInRange(0, can.length - 1)];
+    }
+
+    return undefined;
 }
-grid = [["o", undefined, undefined],
-[undefined, "x", undefined],
-[undefined, undefined, "o"]];
+grid = [["o", "x", "o"],
+        ["o", "x", undefined],
+        ["x", "o", "x"]];
 console.log(machineNextMove(grid, "x"));
 
 function lookForCombinationsOnGrid(grid, ...args) {
@@ -378,8 +455,6 @@ function applyCreate2inRowStrategy(grid, XorO) {
     let comb = comb1.concat(comb2).concat(comb3);
 
     if (comb.length > 0) {
-        console.log("Strategy #4a (create-2-in-row) applies. ");
-
         let points = [];
         for (i = 0; i < comb.length; i++) {
             // make a list of all the end/beg point
@@ -403,8 +478,8 @@ function applyCreate2inRowStrategy(grid, XorO) {
     }
     return undefined;
 }
-// grid = [["o", undefined, undefined],
-//         [undefined, "x", undefined],
-//         [undefined, undefined, "o"]];
+// grid = [["o", "x", "o"],
+//         ["o", "x", undefined],
+//         ["x", "o", undefined]];
 // console.log(applyCreate2inRowStrategy(grid, "x"));
 
