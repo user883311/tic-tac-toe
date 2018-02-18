@@ -67,56 +67,28 @@ function machineNextMove(grid, XorO) {
     Crowley and Spiegler in 1993. 
     */
     let out;
+    let OorX = (XorO === "x")? "o" : "x";
 
     /* Strategy #1: win. If there is a row, column or diagonal with 2 of my pieces
     and a blank space, then play the blank space. */
-
-
-    // let comb1 = lookForCombinationsOnGrid(grid, undefined, XorO, XorO);
-    // let comb2 = lookForCombinationsOnGrid(grid, XorO, undefined, XorO);
-    // let comb3 = lookForCombinationsOnGrid(grid, XorO, XorO, undefined);
-    // let comb = comb1.concat(comb2).concat(comb3);
-
-    // if (comb.length > 0) {
-    //     console.log("Strategy #1 applies. There are", comb.length, "options. ");
-
-    //     let r = returnsRandomIntInRange(0, comb.length - 1);
-    //     let a = comb[r]; // pattern chosen
-
-    //     let undefinedPos;
-    //     if (r < comb1.length) { undefinedPos = 0 }
-    //     else if (r < comb1.concat(comb2).length) { undefinedPos = 1 }
-    //     else { undefinedPos = 2 }
-
-    //     if (undefinedPos === 0) {
-    //         return [a[0][0], a[0][1]];
-    //     }
-    //     else if (undefinedPos === 1) {
-    //         return middlePoint(a[0], a[1]);
-    //     }
-    //     else if (undefinedPos === 2) {
-    //         return [a[1][0], a[1][1]];
-    //     }
-    // }
-
-    // --------------
     out = applyWinStrategy(grid, XorO);
-    
     if(out === undefined){
+        console.log("--------------------------------- ");
         console.log("Strategy #1 could not be applied. ");
         console.log("--------------------------------- ");
     }
     else{return out}
 
-    console.log("--------------------------------- ");
-    console.log("Strategy #1 could not be applied. ");
-    console.log("--------------------------------- ");
-
     /* Strategy #2: block. If there is a row, column or diagonal with 2 of my 
     opponent's pieces and a blank space, then play the blank space. */
+    out = applyWinStrategy(grid, OorX);
+    if(out === undefined){
+        console.log("--------------------------------- ");
+        console.log("Strategy #2 could not be applied. ");
+        console.log("--------------------------------- ");
+    }
+    else{return out}
 
-    console.log("Strategy #2 could not be applied. ");
-    console.log("--------------------------------- ");
     /* Strategy #3: fork. If there are two intersecting rows, columns, or 
     diagonals with one of my pieces and two blonks, and if the intersecting 
     space is empty, then move to the intersecting space (thus creating two 
@@ -155,7 +127,7 @@ function machineNextMove(grid, XorO) {
 
     // return out;
 }
-grid = [[undefined, "x", "x"],
+grid = [[undefined, "o", "x"],
 [undefined, "o", undefined],
 ["x", undefined, undefined]];
 console.log(machineNextMove(grid, "x"));
