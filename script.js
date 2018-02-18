@@ -18,11 +18,19 @@ function promptUserXorO() {
     return userInput;
 }
 
-function updateGrid(element, location) {
+function updateGrid(grid, newElement, newElementXY) {
     /*
     This function updates and returns the grid with a new element placed on it.
     */
+    grid[newElementXY[1]][newElementXY[0]] = newElement;
+    return grid;
 }
+// grid = [[1, 1, 3],
+//         [1, undefined, 1],
+//         [1, 1, 1],
+//         [0, 1, 1]];
+// console.log(updateGrid(grid, "x", [1,1]));
+
 
 function initializeGrid(w = 3, l = 3) {
     /*
@@ -40,22 +48,25 @@ function initializeGrid(w = 3, l = 3) {
 }
 // console.log(initializeGrid(4, 3));
 
-function promptUserNewElementLocation(userNumber, XorO) {
-    /*
-    This function return a user input in string format: 
-    with a row and column number, each between 1 and 3. 
-    */
-}
 
-function checkGameResult(grid) {
+function checkGameWinner(grid) {
     /*
     This function check a given the grid and returns "x" or "o" if there is 
     a winner, undefined otherwise. 
     The player who succeeds in placing three of their marks in a horizontal,
     vertical, or diagonal row wins the game.
-    */
 
+    Returns: "x", "o", "tie", or undefined (no winner yet). 
+    */
+    if (lookForCombinationsOnGrid(grid, "x", "x", "x").length > 0) { return "x"; }
+    else if (lookForCombinationsOnGrid(grid, "o", "o", "o").length > 0) { return "o"; }
+    else if (lookForCombinationsOnGrid(grid, undefined).length < 1) { return "tie"; }
+    return undefined; // "x", "o", undefined
 }
+// grid = [["o", "x", "o"],
+// ["o", "x", "x"],
+// ["x", "o", undefined]];
+// console.log(checkGameWinner(grid));
 
 function machineNextMove(grid, XorO) {
     /*
@@ -231,10 +242,10 @@ function machineNextMove(grid, XorO) {
 
     return undefined;
 }
-grid = [["o", "x", "o"],
-        ["o", "x", undefined],
-        ["x", "o", "x"]];
-console.log(machineNextMove(grid, "x"));
+// grid = [["o", "x", "o"],
+//         ["o", "x", undefined],
+//         ["x", "o", "x"]];
+// console.log(machineNextMove(grid, "x"));
 
 function lookForCombinationsOnGrid(grid, ...args) {
     /* This function looks for a linear sequence of elements (x, o, undefined) 
