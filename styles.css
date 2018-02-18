@@ -1,1 +1,70 @@
+/* CORE STYLES */
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #333;
+    color: #fff;
+    font-size: 1.1em;
+    line-height: 1.5;
+    text-align: center;
 
+}
+
+
+/* CSS Grid attempt */
+
+#css-grid-wrap{
+    background-color: steelblue;
+}
+#tttGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: repeat(3, 33.333vw) ;    
+    border: solid white 1px;
+
+}
+
+#tttGrid div {
+    border: solid white 1px;
+}
+
+
+
+/* HTML table attempt */
+
+#html-table-wrap{
+    background-color: skyblue;
+    margin-top: 1em;
+}
+#table-grid {
+    width: 100%;
+    border: 2px solid black;
+    border-collapse: collapse;
+    empty-cells: show;
+    table-layout: fixed;
+}
+
+#table-grid tr, td {
+    border: 2px solid white;
+}
+
+#table-grid tr {
+    height: 33.333vw;
+}
+#table-grid td {
+    width: 33.3%;
+    height: 50px;
+    border: 1px solid white;
+}
+
+/* MENU GRID */
+#menu-grid{
+    background-color: grey;
+}
+
+/* FOOTER */
+footer{
+    padding: 5vh 5vh;
+}
+
+/* CSS QUERIES */

@@ -494,3 +494,6 @@ function applyCreate2inRowStrategy(grid, XorO) {
 //         ["x", "o", undefined]];
 // console.log(applyCreate2inRowStrategy(grid, "x"));
 
+function playGame(){
+    
+}
