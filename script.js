@@ -67,69 +67,96 @@ function machineNextMove(grid, XorO) {
     Crowley and Spiegler in 1993. 
     */
     let out;
-    let OorX = (XorO === "x")? "o" : "x";
+    let OorX = (XorO === "x") ? "o" : "x";
 
     /* Strategy #1: win. If there is a row, column or diagonal with 2 of my pieces
     and a blank space, then play the blank space. */
     out = applyWinStrategy(grid, XorO);
-    if(out === undefined){
+    if (out === undefined) {
         console.log("--------------------------------- ");
         console.log("Strategy #1 could not be applied. ");
         console.log("--------------------------------- ");
     }
-    else{return out}
+    else {
+        console.log("--------------------------------- ");
+        console.log("Strategy #1 could be applied. ");
+        console.log("--------------------------------- ");
+        return out;
+    }
 
     /* Strategy #2: block. If there is a row, column or diagonal with 2 of my 
     opponent's pieces and a blank space, then play the blank space. */
     out = applyWinStrategy(grid, OorX);
-    if(out === undefined){
+    if (out === undefined) {
         console.log("--------------------------------- ");
         console.log("Strategy #2 could not be applied. ");
         console.log("--------------------------------- ");
     }
-    else{return out}
+    else {
+        console.log("--------------------------------- ");
+        console.log("Strategy #2 could be applied. ");
+        console.log("--------------------------------- ");
+        return out;
+    }
 
     /* Strategy #3: fork. If there are two intersecting rows, columns, or 
     diagonals with one of my pieces and two blonks, and if the intersecting 
     space is empty, then move to the intersecting space (thus creating two 
     woys to win on my next turn). */
-    comb1 = lookForCombinationsOnGrid(grid, XorO, undefined, undefined);
-    comb2 = lookForCombinationsOnGrid(grid, undefined, XorO, undefined);
-    comb3 = lookForCombinationsOnGrid(grid, undefined, undefined, XorO);
-    comb = comb1.concat(comb2).concat(comb3);
-    // comb = comb2.concat(comb3);
-
-    if (comb.length > 1) {
-        let points = [];
-        for (i = 0; i < comb.length; i++) {
-            // make a list of all the end/beg point
-            points.push(comb[i][0]);
-            points.push(comb[i][1]);
-            // add all middle points to that list
-            points.push(middlePoint(comb[i][0], comb[i][1]));
-        }
-        // shortlist all the intersections where item is undefined.
-        var uniq = duplicateValues(points);
-        let blanks = [];
-        for (i = 0; i < uniq.length; i++) {
-            if (grid[uniq[i][1]][uniq[i][0]] === undefined) {
-                blanks.push([uniq[i][1], uniq[i][0]]);
-            }
-        }
-        // pick one intersection at random
-        let r = returnsRandomIntInRange(0, blanks.length - 1);
-        let a = blanks[r];
-        return (a);
+    out = applyForkStrategy(grid, XorO);
+    if (out === undefined) {
+        console.log("--------------------------------- ");
+        console.log("Strategy #3 could not be applied. ");
+        console.log("--------------------------------- ");
     }
-    console.log("Strategy #3 could not be applied. ");
-    console.log("--------------------------------- ");
+    else {
+        console.log("--------------------------------- ");
+        console.log("Strategy #3 could be applied. ");
+        console.log("--------------------------------- ");
+        return out;
+    }
 
+    /* Strategy #4: block fork. If there are two intersecting rows, columns, or diagonals with one of my
+        opponent’s pieces ond two blanks, and
+        If the intersecting space is empty,
+        Then
+        (#4a) If there is an empty location that creates a two-in-o-row for me (thus
+        forcing my opponent to block rather than fork),
+        Then move to the location.*/
+        out = applyCreate2inRowStrategy(grid, OorX);
+        if (out === undefined) {
+            console.log("--------------------------------- ");
+            console.log("Strategy #4a could not be applied. ");
+            console.log("--------------------------------- ");
+        }
+        else {
+            console.log("--------------------------------- ");
+            console.log("Strategy #4a could be applied. ");
+            console.log("--------------------------------- ");
+            return out;
+        }
+
+
+    /* (#4b)Else move to the Intersection space (thus occupying the location that my
+    opponent could use to fork). */
+    out = applyForkStrategy(grid, OorX);
+    if (out === undefined) {
+        console.log("--------------------------------- ");
+        console.log("Strategy #4b could not be applied. ");
+        console.log("--------------------------------- ");
+    }
+    else {
+        console.log("--------------------------------- ");
+        console.log("Strategy #4b could be applied. ");
+        console.log("--------------------------------- ");
+        return out;
+    }
 
     // return out;
 }
-grid = [[undefined, "o", "x"],
-[undefined, "o", undefined],
-["x", undefined, undefined]];
+grid = [["o", undefined, undefined],
+[undefined, "x", undefined],
+[undefined, undefined, "o"]];
 console.log(machineNextMove(grid, "x"));
 
 function lookForCombinationsOnGrid(grid, ...args) {
@@ -284,7 +311,6 @@ function duplicateValues(arr) {
 
 
 function applyWinStrategy(grid, XorO) {
-
     let comb1 = lookForCombinationsOnGrid(grid, undefined, XorO, XorO);
     let comb2 = lookForCombinationsOnGrid(grid, XorO, undefined, XorO);
     let comb3 = lookForCombinationsOnGrid(grid, XorO, XorO, undefined);
@@ -313,3 +339,72 @@ function applyWinStrategy(grid, XorO) {
     }
     return undefined;
 }
+
+function applyForkStrategy(grid, XorO) {
+    let comb1 = lookForCombinationsOnGrid(grid, XorO, undefined, undefined);
+    let comb2 = lookForCombinationsOnGrid(grid, undefined, XorO, undefined);
+    let comb3 = lookForCombinationsOnGrid(grid, undefined, undefined, XorO);
+    let comb = comb1.concat(comb2).concat(comb3);
+
+    if (comb.length > 1) {
+        let points = [];
+        for (i = 0; i < comb.length; i++) {
+            // make a list of all the end/beg point
+            points.push(comb[i][0]);
+            points.push(comb[i][1]);
+            // add all middle points to that list
+            points.push(middlePoint(comb[i][0], comb[i][1]));
+        }
+        // shortlist all the intersections where item is undefined.
+        var uniq = duplicateValues(points);
+        let blanks = [];
+        for (i = 0; i < uniq.length; i++) {
+            if (grid[uniq[i][1]][uniq[i][0]] === undefined) {
+                blanks.push([uniq[i][1], uniq[i][0]]);
+            }
+        }
+        // pick one intersection at random
+        let r = returnsRandomIntInRange(0, blanks.length - 1);
+        let a = blanks[r];
+        return (a);
+    }
+    return undefined;
+}
+
+function applyCreate2inRowStrategy(grid, XorO) {
+    let comb1 = lookForCombinationsOnGrid(grid, XorO, undefined, undefined);
+    let comb2 = lookForCombinationsOnGrid(grid, undefined, XorO, undefined);
+    let comb3 = lookForCombinationsOnGrid(grid, undefined, undefined, XorO);
+    let comb = comb1.concat(comb2).concat(comb3);
+
+    if (comb.length > 0) {
+        console.log("Strategy #4a (create-2-in-row) applies. ");
+
+        let points = [];
+        for (i = 0; i < comb.length; i++) {
+            // make a list of all the end/beg point
+            points.push(comb[i][0]);
+            points.push(comb[i][1]);
+            // add all middle points to that list
+            points.push(middlePoint(comb[i][0], comb[i][1]));
+        }
+
+        // shortlist all the points where item is undefined.
+        let blanks = [];
+        for (i = 0; i < points.length; i++) {
+            if (grid[points[i][1]][points[i][0]] === undefined) {
+                blanks.push([points[i][1], points[i][0]]);
+            }
+        }
+        // Pick one blank cell at random. 
+        let r = returnsRandomIntInRange(0, blanks.length - 1);
+        let a = blanks[r];
+        return (a);
+    }
+    return undefined;
+}
+// grid = [["o", undefined, undefined],
+//         [undefined, "x", undefined],
+//         [undefined, undefined, "o"]];
+// console.log(applyCreate2inRowStrategy(grid, "x"));
+
