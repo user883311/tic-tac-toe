@@ -1,4 +1,8 @@
 /* CORE STYLES */
+h1 {
+    color:rgb(220, 137, 25);
+    padding-top: 10px;
+}
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
@@ -7,59 +11,62 @@ body {
     font-size: 1.1em;
     line-height: 1.5;
     text-align: center;
-
 }
-
+a {
+    text-decoration: none;
+    color:rgb(220, 137, 25);
+}
 
 /* CSS Grid attempt */
-
-#css-grid-wrap{
-    background-color: steelblue;
-}
 #tttGrid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: repeat(3, 33.333vw) ;    
-    border: solid white 1px;
-
+    grid-template-columns: repeat(3, 24vw);
+    grid-template-rows: repeat(3, 24vw);  
+    justify-content: center;
 }
-
 #tttGrid div {
     border: solid white 1px;
-}
-
-
-
-/* HTML table attempt */
-
-#html-table-wrap{
-    background-color: skyblue;
-    margin-top: 1em;
-}
-#table-grid {
-    width: 100%;
-    border: 2px solid black;
-    border-collapse: collapse;
-    empty-cells: show;
-    table-layout: fixed;
-}
-
-#table-grid tr, td {
-    border: 2px solid white;
-}
-
-#table-grid tr {
-    height: 33.333vw;
-}
-#table-grid td {
-    width: 33.3%;
-    height: 50px;
-    border: 1px solid white;
+    background-color: rgb(122, 155, 182);
 }
 
 /* MENU GRID */
 #menu-grid{
-    background-color: grey;
+    background-color: steelblue;
+    display: inline-grid ;
+    grid-template-columns: repeat(2, 36vw);
+    justify-content: center;  
+    
+}
+#message, #option1, #option2, #reset{
+    margin: 0;
+    padding: 0.5em 0;
+}
+#option1, #option2 {
+    border-top: dotted white 1px;
+    border-bottom: dotted white 1px;
+}
+#option1:hover, #option2:hover {
+    background-color: rgb(92, 91, 91);
+    cursor: pointer;
+}
+#reset:hover {
+    background-color: rgb(212, 136, 136);
+    cursor: pointer;
+}
+#option1 {
+    border-left: solid white 1px;
+}
+#option2 {
+    border-right: solid white 1px;
+}
+
+#message, #reset{
+    grid-column: 1/ span 2;
+    border: solid white ; 
+    border-width: 0px 1px ;
+}
+#reset{
+    border-bottom: solid white 1px;
 }
 
 /* FOOTER */
@@ -68,3 +75,12 @@ footer{
 }
 
 /* CSS QUERIES */
+@media (min-width: 450px) {
+    #tttGrid {
+        grid-template-columns: repeat(3, 108px);
+        grid-template-rows: repeat(3, 108px) ;    
+    }
+    #menu-grid{
+        grid-template-columns: repeat(2, 162px);
+    }
+}
