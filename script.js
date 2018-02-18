@@ -61,7 +61,7 @@ function machineNextMove(grid, XorO) {
     /*
     This function picks the best next move for the machine, for a given grid
     and knowing whether X or O is the next move.
-    It returns a grid location represented as a (x, y) coordinate.
+    It returns a grid location represented as a [x, y] set of coordinates (a move).
 
     Optimization: there are 8 winning strategies, according to the combinatorics done by
     Crowley and Spiegler in 1993. 
@@ -90,27 +90,61 @@ function machineNextMove(grid, XorO) {
             return [a[0][0], a[0][1]];
         }
         else if (undefinedPos === 1) {
-            let x = (Math.abs(a[0][0] - a[1][0])) / 2;
-            let y = (Math.abs(a[0][1] - a[1][1])) / 2;
-            // return a;
-            return [x, y];
+            return middlePoint(a[0], a[1]);
         }
         else if (undefinedPos === 2) {
             return [a[1][0], a[1][1]];
         }
     }
-    return "Strategy #1 could not be applied. ";
+    console.log("Strategy #1 could not be applied. ");
+    console.log("--------------------------------- ");
 
-    /* Strategy #2: block. If there is a row, column or diagonal with 2 of my opponent's 
-    pieces and a blank space, then play the blank space. */
-    
+
+    /* Strategy #2: block. If there is a row, column or diagonal with 2 of my 
+    opponent's pieces and a blank space, then play the blank space. */
+
+    console.log("Strategy #2 could not be applied. ");
+    console.log("--------------------------------- ");
+    /* Strategy #3: fork. If there are two intersecting rows, columns, or 
+    diagonals with one of my pieces and two blonks, and if the intersecting 
+    space is empty, then move to the intersecting space (thus creating two 
+    woys to win on my next turn). */
+    comb1 = lookForCombinationsOnGrid(grid, XorO, undefined, undefined);
+    comb2 = lookForCombinationsOnGrid(grid, undefined, XorO, undefined);
+    comb3 = lookForCombinationsOnGrid(grid, undefined, undefined, XorO);
+    comb = comb1.concat(comb2).concat(comb3);
+
+    if (comb.length > 1) {
+        let points = [];
+        for (i = 0; i < comb.length; i++) {
+            // make a list of all the end/beg point
+            points.push(comb[i][0]);
+            points.push(comb[i][1]);
+            // add all middle points to that list
+            points.push(middlePoint(comb[i][0], comb[i][1]));
+        }
+        // shortlist all the intersections where item is undefined.
+        var uniq = duplicateValues(points);
+        let blanks = [];
+        for (i = 0; i < uniq.length; i++) {
+            if(grid[uniq[i][0]][uniq[i][1]] === undefined){
+                blanks.push([uniq[i][0],uniq[i][1]]);
+            }
+        }
+        // pick one intersection at random
+        let r = returnsRandomIntInRange(0, blanks.length - 1);
+        let a = blanks[r];
+        return (a);
+    }
+    console.log("Strategy #3 could not be applied. ");
+    console.log("--------------------------------- ");
 
 
     return result;
 }
-grid = [[undefined, undefined, "o"],
-        ["o", "o", undefined],
-        ["x", "x", undefined]];
+grid = [[undefined, "x", undefined],
+[undefined, "o", undefined],
+["x", undefined, undefined]];
 console.log(machineNextMove(grid, "x"));
 
 function lookForCombinationsOnGrid(grid, ...args) {
@@ -121,107 +155,6 @@ function lookForCombinationsOnGrid(grid, ...args) {
     Inputs:
     - grid, a system of coordinates with an x-axis and an inverted y-axis.   
     - elements can be any sort of built-in objects.  
-    */
-
-    let sequence = [];
-    sequence.push(args[0]);
-    args.reduce(function (accumulator, currentValue, currentIndex, args) {
-        return sequence.push(currentValue);
-    });
-    console.log("sequence =", sequence);
-
-    let testedArr;
-    // Look for this combination horizontally. 
-    let result1 = [];
-    for (i = 0; i < grid.length; i++) {
-        for (j = 0; j <= grid[i].length - sequence.length; j++) {
-            testedArr = [];
-            for (k = 0; k < sequence.length; k++) {
-                testedArr.push(grid[i][j + k]);
-            }
-            if (testedArr.join() === sequence.join()) {
-                let start = [j, i];
-                let end = [j + sequence.length - 1, i];
-                result1.push([start, end]);
-            }
-        }
-    }
-    console.log("Found", result1.length, "results horizontally. ");
-
-    // Look for this combination vertically. 
-    let result2 = [];
-    for (i = 0; i < grid[0].length; i++) {
-        for (j = 0; j <= grid.length - sequence.length; j++) {
-            testedArr = [];
-            for (k = 0; k < sequence.length; k++) {
-                testedArr.push(grid[j + k][i]);
-            }
-            if (testedArr.join() === sequence.join()) {
-                let start = [i, j];
-                let end = [i, j + sequence.length - 1];
-                result2.push([start, end]);
-            }
-        }
-    }
-    console.log("Found", result2.length, "results vertically. ");
-
-    // Look for this combination diagonally. 
-    let result3 = [];
-    for (i = 0; i <= grid.length - sequence.length; i++) {
-        for (j = 0; j <= grid[i].length - sequence.length; j++) {
-            testedArr = [];
-            for (k = 0; k < sequence.length; k++) {
-                testedArr.push(grid[i + k][j + k]);
-            }
-            if (testedArr.join() === sequence.join()) {
-                let start = [j, i];
-                let end = [j + sequence.length - 1, i + sequence.length - 1];
-                result3.push([start, end]);
-            }
-        }
-    }
-    console.log("Found", result3.length, "results diagonally (left to right). ");
-
-    // and diagonally the other way... 
-    let result4 = [];
-    for (i = 0; i <= grid.length - sequence.length; i++) { // line i = 0
-        for (j = grid[i].length - 1; j >= 0 + sequence.length - 1; j--) { // column j = 1
-            testedArr = [];
-            for (k = 0; k < sequence.length; k++) {
-                testedArr.push(grid[i + k][j - k]); // + 1 line to i, -1 col to j
-            }
-            if (testedArr.join() === sequence.join()) {
-                let start = [j, i];
-                let end = [j - sequence.length + 1, i + sequence.length - 1];
-                result4.push([start, end]);
-            }
-        }
-    }
-    console.log("Found", result4.length, "results diagonally (right to left). ");
-
-    let result = result1.concat(result2);
-    result = result.concat(result3);
-    result = result.concat(result4);
-
-    return result;
-}
-// grid = [[1, 1, 3],
-//         [1, 1, 1],
-//         [1, 1, 1],
-//         [0, 1, 1]];
-// console.log(lookForCombinationsOnGrid(grid, 1, 1, 1, 0));
-
-function combinationsCoordinatesOnGrid(grid, ...args) {
-    /* This function looks for a linear sequence of elements (x, o, undefined) 
-    on the grid. 
-    It returns an array of the pairs of each elements paired with their resp. 
-    beginning and ending coordinates (x, y). 
-
-    Inputs:
-    - grid, a system of coordinates with an x-axis and an inverted y-axis.   
-    - elements can be any sort of built-in objects.  
-
-    Returns: an array where each item is [element, [x, y]].
     */
 
     let sequence = [];
@@ -325,3 +258,150 @@ function pickRandomArrElement(arr) {
     return arr[r.toString()[0]];
 }
 // console.log(pickRandomArrElement(["a", "v", "c", "d"]));
+
+function combinationsCoordinatesOnGrid(grid, ...args) {
+    /* This function looks for a linear sequence of elements (x, o, undefined) 
+    on the grid. 
+    It returns an array of the pairs of each elements paired with their resp. 
+    beginning and ending coordinates (x, y). 
+
+    Inputs:
+    - grid, a system of coordinates with an x-axis and an inverted y-axis.   
+    - elements can be any sort of built-in objects.  
+
+    Returns: a collection where each item is [[element coordinates], 'type'].
+    */
+
+    let sequence = [];
+    sequence.push(args[0]);
+    args.reduce(function (accumulator, currentValue, currentIndex, args) {
+        return sequence.push(currentValue);
+    });
+    console.log("sequence =", sequence);
+
+    let testedArr;
+    // Look for this combination horizontally. 
+    let result1 = [];
+    for (i = 0; i < grid.length; i++) {
+        for (j = 0; j <= grid[i].length - sequence.length; j++) {
+            testedArr = [];
+            for (k = 0; k < sequence.length; k++) {
+                testedArr.push(grid[i][j + k]);
+            }
+            if (testedArr.join() === sequence.join()) {
+                let start = [j, i];
+                let end = [j + sequence.length - 1, i];
+                result1.push([start, end]);
+            }
+        }
+    }
+    console.log("Found", result1.length, "results horizontally. ");
+
+    // Look for this combination vertically. 
+    let result2 = [];
+    for (i = 0; i < grid[0].length; i++) {
+        for (j = 0; j <= grid.length - sequence.length; j++) {
+            testedArr = [];
+            for (k = 0; k < sequence.length; k++) {
+                testedArr.push(grid[j + k][i]);
+            }
+            if (testedArr.join() === sequence.join()) {
+                let start = [i, j];
+                let end = [i, j + sequence.length - 1];
+                result2.push([start, end]);
+            }
+        }
+    }
+    console.log("Found", result2.length, "results vertically. ");
+
+    // Look for this combination diagonally. 
+    let result3 = [];
+    for (i = 0; i <= grid.length - sequence.length; i++) {
+        for (j = 0; j <= grid[i].length - sequence.length; j++) {
+            testedArr = [];
+            for (k = 0; k < sequence.length; k++) {
+                testedArr.push(grid[i + k][j + k]);
+            }
+            if (testedArr.join() === sequence.join()) {
+                let start = [j, i];
+                let end = [j + sequence.length - 1, i + sequence.length - 1];
+                result3.push([start, end]);
+            }
+        }
+    }
+    console.log("Found", result3.length, "results diagonally (left to right). ");
+
+    // and diagonally the other way... 
+    let result4 = [];
+    for (i = 0; i <= grid.length - sequence.length; i++) { // line i = 0
+        for (j = grid[i].length - 1; j >= 0 + sequence.length - 1; j--) { // column j = 1
+            testedArr = [];
+            for (k = 0; k < sequence.length; k++) {
+                testedArr.push(grid[i + k][j - k]); // + 1 line to i, -1 col to j
+            }
+            if (testedArr.join() === sequence.join()) {
+                let start = [j, i];
+                let end = [j - sequence.length + 1, i + sequence.length - 1];
+                result4.push([start, end]);
+            }
+        }
+    }
+    console.log("Found", result4.length, "results diagonally (right to left). ");
+
+    let result = result1.concat(result2);
+    result = result.concat(result3);
+    result = result.concat(result4);
+
+    return result;
+}
+// grid = [[1, 1, 3],
+// [1, 1, 1],
+// [1, 1, 1],
+// [0, 1, 1]];
+// console.log(combinationsCoordinatesOnGrid(grid, 1, 1, 1, 0));
+
+
+function middlePoint(arrCoord1, arrCoord2) {
+    /* This function takes 2 pairs of coordinates in the form of arrays. 
+    It returns the middle point coordinates (x,y). */
+    let result = [];
+    let x = (Math.abs(arrCoord1[0] + arrCoord2[0])) / 2;
+
+
+    let y = (Math.abs(arrCoord1[1] + arrCoord2[1])) / 2;
+    return [x, y];
+}
+// console.log(middlePoint([1, 0], [1, 2])); // [1, 1]
+// console.log(middlePoint([0, 2], [2, 0])); // [1, 1]
+// console.log(middlePoint([0, 0], [2, 2])); // [1, 1]
+// console.log(middlePoint([2, 0], [0, 2])); // [1, 1]
+
+
+function duplicateValues(arr) {
+    var len = arr.length,
+        out = [],
+        counts = {};
+
+    for (var i = 0; i < len; i++) {
+        var item = arr[i];
+        counts[item] = counts[item] >= 1 ? counts[item] + 1 : 1;
+        if (counts[item] === 2) {
+            out.push(item);
+        }
+    }
+    return out;
+}
+
+// var a = [[0, 2],
+// [2, 2],
+// [1, 2],
+// [1, 0],
+// [1, 2],
+// [1, 1],
+// [0, 0],
+// [2, 0],
+// [1, 0],
+// [2, 0],
+// [0, 2],
+// [1, 1]];
+// console.log(duplicateValues(a));
