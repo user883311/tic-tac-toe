@@ -23,10 +23,17 @@ a {
     grid-template-columns: repeat(3, 24vw);
     grid-template-rows: repeat(3, 24vw);  
     justify-content: center;
+    position: relative;
 }
-#tttGrid div {
+#tttGrid>div {
     border: solid white 1px;
     background-color: rgb(122, 155, 182);
+    font-size: 24vw;
+    cursor: pointer;
+}
+
+#tttGrid>div>span {
+    line-height: 20vw;
 }
 
 /* MENU GRID */
@@ -45,21 +52,16 @@ a {
     border-top: dotted white 1px;
     border-bottom: dotted white 1px;
 }
-#option1:hover, #option2:hover {
-    background-color: rgb(92, 91, 91);
-    cursor: pointer;
-}
-#reset:hover {
-    background-color: rgb(212, 136, 136);
-    cursor: pointer;
-}
 #option1 {
     border-left: solid white 1px;
 }
 #option2 {
     border-right: solid white 1px;
 }
-
+#option1:hover, #option2:hover {
+    background-color: rgb(92, 91, 91);
+    cursor: pointer;
+}
 #message, #reset{
     grid-column: 1/ span 2;
     border: solid white ; 
@@ -68,6 +70,11 @@ a {
 #reset{
     border-bottom: solid white 1px;
 }
+#reset:hover {
+    background-color: rgb(212, 136, 136);
+    cursor: pointer;
+}
+
 
 /* FOOTER */
 footer{
@@ -80,6 +87,12 @@ footer{
         grid-template-columns: repeat(3, 108px);
         grid-template-rows: repeat(3, 108px) ;    
     }
+    #tttGrid>div {
+        font-size: 108px;
+    }
+    #tttGrid>div>span {
+        line-height: 90px;
+        }
     #menu-grid{
         grid-template-columns: repeat(2, 162px);
     }
