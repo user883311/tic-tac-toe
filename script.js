@@ -574,7 +574,7 @@ function startGame() {
     }
 }
 
-function humanPlays(coordXY) {
+async function humanPlays(coordXY) {
     let x = coordXY[0];
     let y = coordXY[1];
     if (grid[y][x] === undefined) {
@@ -588,7 +588,8 @@ function humanPlays(coordXY) {
             }
         }
         else {
-            document.getElementById("message").textContent = "There is a winner!";
+            document.getElementById("message").textContent = "Game over!";
+            await sleep(2000);
             gameOver(grid);
         }
     }
@@ -596,16 +597,25 @@ function humanPlays(coordXY) {
     }
 }
 
-function gameOver(grid) {
+async function gameOver(grid) {
     let winner = checkGameWinner(grid);
     if (winner === player1 && numberHumanPlayers === 1) {
         winner = "You";
+        noTie();
     }
-    else if (winner === player1) { winner = "Computer (player 1)" }
-    else if (winner === player2) { winner = "Computer (player 2)" }
+    else if (winner === player1) { winner = "Computer (player 1)"; noTie() }
+    else if (winner === player2) { winner = "Computer (player 2)"; noTie() }
     else if (winner === "tie") {
         document.getElementById("message").textContent = "It's a tie!"
     }
-    document.getElementById("message").textContent = winner + " win!";
+    await sleep(2000);
     reset()
+
+    function noTie() {
+        document.getElementById("message").textContent = winner + " win!";
+    }
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
