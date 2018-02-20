@@ -6,6 +6,7 @@ var grid = initializeGrid(m, n);
 var numberHumanPlayers; // 0, 1, 2
 var numberComputerPlayers = 2 - numberHumanPlayers; // 0, 1, 2
 var player1, player2; // "x", "o"
+var nowPlaying = false; 
 
 function promptUserXorO() {
     /*
@@ -518,9 +519,7 @@ function applyCreate2inRowStrategy(grid, XorO) {
 // console.log(applyCreate2inRowStrategy(grid, "x"));
 
 function menu(...args) {
-    console.log("menu(" + args[0] + ") loaded...");
     if (numberHumanPlayers === undefined) {
-        console.log("setting playing mode...");
         document.getElementById("option1").textContent = "x";
         document.getElementById("option2").textContent = "o";
         if (args[0] === 1) {
@@ -533,7 +532,6 @@ function menu(...args) {
         }
     }
     else if (player1 === undefined) {
-        console.log("setting X or O....")
         if (args[0] === 1) { // option 1
             player1 = "x";
             player2 = "o";
@@ -548,7 +546,6 @@ function menu(...args) {
 }
 
 function reset() {
-    console.log("reset()...");
     numberHumanPlayers = undefined;
     numberComputerPlayers = undefined;
     player1 = undefined;
@@ -561,7 +558,7 @@ function reset() {
 }
 
 function startGame() {
-    console.log("startGame() loaded...");
+    nowPlaying=true;
     populateDomGrid(grid);
     if (checkGameWinner(grid) === undefined) {
         if (player1 === "o") {
@@ -577,7 +574,7 @@ function startGame() {
 async function humanPlays(coordXY) {
     let x = coordXY[0];
     let y = coordXY[1];
-    if (grid[y][x] === undefined) {
+    if (grid[y][x] === undefined && nowPlaying === true) {
         updateGrid(grid, player1, coordXY);
         populateDomGrid(grid, player1, coordXY);
         if (checkGameWinner(grid) === undefined) {
@@ -593,8 +590,6 @@ async function humanPlays(coordXY) {
             gameOver(grid);
         }
     }
-    else {
-    }
 }
 
 async function gameOver(grid) {
@@ -609,6 +604,7 @@ async function gameOver(grid) {
         document.getElementById("message").textContent = "It's a tie!"
     }
     await sleep(2000);
+    nowPlaying = false;
     reset()
 
     function noTie() {
