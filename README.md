@@ -4,6 +4,7 @@
 Objective: Build a CodePen.io app that is functionally similar to this: https://codepen.io/FreeCodeCamp/full/KzXQgy/.
 
 User Story: 
+- Before game starts, the computer plays against itself in the background.
 - I can play a game of Tic Tac Toe with the computer.
 - My game resets as soon as it's over so I can play again.
 - I can choose whether I want to play as X or O.

@@ -5,7 +5,7 @@ var grid = initializeGrid(m, n);
 
 var numberHumanPlayers; // 0, 1, 2
 var numberComputerPlayers = 2 - numberHumanPlayers; // 0, 1, 2
-
+var player1, player2; // "x", "o"
 
 function promptUserXorO() {
     /*
@@ -17,20 +17,6 @@ function promptUserXorO() {
     }
     return userInput;
 }
-
-function updateGrid(grid, newElement, newElementXY) {
-    /*
-    This function updates and returns the grid with a new element placed on it.
-    */
-    grid[newElementXY[1]][newElementXY[0]] = newElement;
-    return grid;
-}
-// grid = [[1, 1, 3],
-//         [1, undefined, 1],
-//         [1, 1, 1],
-//         [0, 1, 1]];
-// console.log(updateGrid(grid, "x", [1,1]));
-
 
 function initializeGrid(w = 3, l = 3) {
     /*
@@ -47,7 +33,44 @@ function initializeGrid(w = 3, l = 3) {
     return grid;
 }
 // console.log(initializeGrid(4, 3));
+function updateGrid(grid, newElement, newElementXY) {
+    /*
+    This function updates and returns the grid with a new element placed on it.
+    */
+    grid[newElementXY[1]][newElementXY[0]] = newElement;
+    return grid;
+}
+// grid = [[1, 1, 3],
+//         [1, undefined, 1],
+//         [1, 1, 1],
+//         [0, 1, 1]];
+// console.log(updateGrid(grid, "x", [1,1]));
 
+function populateDomGrid(grid, newElement, coordXY) {
+    /* This function updates the entire grid on the DOM with each values of
+    the JS grid variable, or updates one particular coordinate on the DOM 
+    grid with the newElement string value. */
+    if (newElement !== undefined || coordXY !== undefined) {
+        let x = coordXY[0].toString();
+        let y = coordXY[1].toString();
+        document.getElementById("content-xy" + x + y).textContent = newElement;
+    }
+
+    else if (newElement === undefined || coordXY === undefined) {
+        for (i = 0; i < grid.length; i++) { // row
+            for (j = 0; j < grid[0].length; j++) { // column
+                i = i.toString();
+                j = j.toString();
+                // console.log("xy" + j + i);
+                document.getElementById("content-xy" + j + i).textContent = grid[i][j];
+            }
+        }
+    }
+}
+// grid = [["x", "x", "o"],
+// ["x", undefined, "o"],
+// ["o", "o", undefined]];
+// populateDomGrid(grid);
 
 function checkGameWinner(grid) {
     /*
@@ -55,7 +78,7 @@ function checkGameWinner(grid) {
     a winner, undefined otherwise. 
     The player who succeeds in placing three of their marks in a horizontal,
     vertical, or diagonal row wins the game.
-
+ 
     Returns: "x", "o", "tie", or undefined (no winner yet). 
     */
     if (lookForCombinationsOnGrid(grid, "x", "x", "x").length > 0) { return "x"; }
@@ -73,7 +96,7 @@ function machineNextMove(grid, XorO) {
     This function picks the best next move for the machine, for a given grid
     and knowing whether X or O is the next move.
     It returns a grid location represented as a [x, y] set of coordinates (a move).
-
+ 
     Optimization: there are 8 winning strategies, according to the combinatorics done by
     Crowley and Spiegler in 1993. 
     */
@@ -84,14 +107,14 @@ function machineNextMove(grid, XorO) {
     and a blank space, then play the blank space. */
     out = applyWinStrategy(grid, XorO);
     if (out === undefined) {
-        console.log("--------------------------------- ");
-        console.log("Strategy #1 could not be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #1 could not be applied. ");
+        // console.log("--------------------------------- ");
     }
     else {
-        console.log("--------------------------------- ");
-        console.log("Strategy #1 could be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #1 could be applied. ");
+        // console.log("--------------------------------- ");
         return out;
     }
 
@@ -99,14 +122,14 @@ function machineNextMove(grid, XorO) {
     opponent's pieces and a blank space, then play the blank space. */
     out = applyWinStrategy(grid, OorX);
     if (out === undefined) {
-        console.log("--------------------------------- ");
-        console.log("Strategy #2 could not be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #2 could not be applied. ");
+        // console.log("--------------------------------- ");
     }
     else {
-        console.log("--------------------------------- ");
-        console.log("Strategy #2 could be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #2 could be applied. ");
+        // console.log("--------------------------------- ");
         return out;
     }
 
@@ -116,14 +139,14 @@ function machineNextMove(grid, XorO) {
     woys to win on my next turn). */
     out = applyForkStrategy(grid, XorO);
     if (out === undefined) {
-        console.log("--------------------------------- ");
-        console.log("Strategy #3 could not be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #3 could not be applied. ");
+        // console.log("--------------------------------- ");
     }
     else {
-        console.log("--------------------------------- ");
-        console.log("Strategy #3 could be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #3 could be applied. ");
+        // console.log("--------------------------------- ");
         return out;
     }
 
@@ -136,14 +159,14 @@ function machineNextMove(grid, XorO) {
         Then move to the location.*/
     out = applyCreate2inRowStrategy(grid, XorO);
     if (out === undefined) {
-        console.log("--------------------------------- ");
-        console.log("Strategy #4a could not be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #4a could not be applied. ");
+        // console.log("--------------------------------- ");
     }
     else {
-        console.log("--------------------------------- ");
-        console.log("Strategy #4a could be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #4a could be applied. ");
+        // console.log("--------------------------------- ");
         return out;
     }
 
@@ -152,14 +175,14 @@ function machineNextMove(grid, XorO) {
     opponent could use to fork). */
     out = applyForkStrategy(grid, OorX);
     if (out === undefined) {
-        console.log("--------------------------------- ");
-        console.log("Strategy #4b could not be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #4b could not be applied. ");
+        // console.log("--------------------------------- ");
     }
     else {
-        console.log("--------------------------------- ");
-        console.log("Strategy #4b could be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #4b could be applied. ");
+        // console.log("--------------------------------- ");
         return out;
     }
 
@@ -168,14 +191,14 @@ function machineNextMove(grid, XorO) {
     if (grid[1][1] === undefined) { out = [1, 1] }
     else (out = undefined)
     if (out === undefined) {
-        console.log("--------------------------------- ");
-        console.log("Strategy #5 could not be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #5 could not be applied. ");
+        // console.log("--------------------------------- ");
     }
     else {
-        console.log("--------------------------------- ");
-        console.log("Strategy #5 could be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #5 could be applied. ");
+        // console.log("--------------------------------- ");
         return out;
     }
 
@@ -189,14 +212,14 @@ function machineNextMove(grid, XorO) {
     else if (grid[2][2] === OorX && grid[0][0] === undefined) { can.push([0, 0]) }
 
     if (can.length === 0) {
-        console.log("--------------------------------- ");
-        console.log("Strategy #6 could not be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #6 could not be applied. ");
+        // console.log("--------------------------------- ");
     }
     else {
-        console.log("--------------------------------- ");
-        console.log("Strategy #6 could be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #6 could be applied. ");
+        // console.log("--------------------------------- ");
         return can[returnsRandomIntInRange(0, can.length - 1)];
     }
 
@@ -209,14 +232,14 @@ function machineNextMove(grid, XorO) {
     else if (grid[2][2] === undefined) { can.push([2, 2]) }
 
     if (can.length === 0) {
-        console.log("--------------------------------- ");
-        console.log("Strategy #7 could not be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #7 could not be applied. ");
+        // console.log("--------------------------------- ");
     }
     else {
-        console.log("--------------------------------- ");
-        console.log("Strategy #7 could be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #7 could be applied. ");
+        // console.log("--------------------------------- ");
         return can[returnsRandomIntInRange(0, can.length - 1)];
     }
     /* Strategy #8: play empty side. If there is an empty side, then 
@@ -229,14 +252,14 @@ function machineNextMove(grid, XorO) {
     else { out = undefined }
 
     if (can.length === 0) {
-        console.log("--------------------------------- ");
-        console.log("Strategy #8 could not be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #8 could not be applied. ");
+        // console.log("--------------------------------- ");
     }
     else {
-        console.log("--------------------------------- ");
-        console.log("Strategy #8 could be applied. ");
-        console.log("--------------------------------- ");
+        // console.log("--------------------------------- ");
+        // console.log("Strategy #8 could be applied. ");
+        // console.log("--------------------------------- ");
         return can[returnsRandomIntInRange(0, can.length - 1)];
     }
 
@@ -262,7 +285,7 @@ function lookForCombinationsOnGrid(grid, ...args) {
     args.reduce(function (accumulator, currentValue, currentIndex, args) {
         return sequence.push(currentValue);
     });
-    console.log("sequence =", sequence);
+    // console.log("sequence =", sequence);
 
     let testedArr;
     // Look for this combination horizontally. 
@@ -280,7 +303,7 @@ function lookForCombinationsOnGrid(grid, ...args) {
             }
         }
     }
-    console.log("Found", result1.length, "results horizontally. ");
+    // console.log("Found", result1.length, "results horizontally. ");
 
     // Look for this combination vertically. 
     let result2 = [];
@@ -297,7 +320,7 @@ function lookForCombinationsOnGrid(grid, ...args) {
             }
         }
     }
-    console.log("Found", result2.length, "results vertically. ");
+    // console.log("Found", result2.length, "results vertically. ");
 
     // Look for this combination diagonally. 
     let result3 = [];
@@ -314,7 +337,7 @@ function lookForCombinationsOnGrid(grid, ...args) {
             }
         }
     }
-    console.log("Found", result3.length, "results diagonally (left to right). ");
+    // console.log("Found", result3.length, "results diagonally (left to right). ");
 
     // and diagonally the other way... 
     let result4 = [];
@@ -331,7 +354,7 @@ function lookForCombinationsOnGrid(grid, ...args) {
             }
         }
     }
-    console.log("Found", result4.length, "results diagonally (right to left). ");
+    // console.log("Found", result4.length, "results diagonally (right to left). ");
 
     let result = result1.concat(result2);
     result = result.concat(result3);
@@ -405,7 +428,7 @@ function applyWinStrategy(grid, XorO) {
     let comb = comb1.concat(comb2).concat(comb3);
 
     if (comb.length > 0) {
-        console.log("Strategy #1 (win) applies. There are", comb.length, "options. ");
+        // console.log("Strategy #1 (win) applies. There are", comb.length, "options. ");
 
         let r = returnsRandomIntInRange(0, comb.length - 1);
         let a = comb[r]; // pattern chosen
@@ -494,6 +517,95 @@ function applyCreate2inRowStrategy(grid, XorO) {
 //         ["x", "o", undefined]];
 // console.log(applyCreate2inRowStrategy(grid, "x"));
 
-function playGame(){
-    
+function menu(...args) {
+    console.log("menu(" + args[0] + ") loaded...");
+    if (numberHumanPlayers === undefined) {
+        console.log("setting playing mode...");
+        document.getElementById("option1").textContent = "x";
+        document.getElementById("option2").textContent = "o";
+        if (args[0] === 1) {
+            numberHumanPlayers = 1;
+            numberComputerPlayers = 1;
+        }
+        else if (args[0] === 2) {
+            numberHumanPlayers = 2;
+            numberComputerPlayers = 0;
+        }
+    }
+    else if (player1 === undefined) {
+        console.log("setting X or O....")
+        if (args[0] === 1) { // option 1
+            player1 = "x";
+            player2 = "o";
+        }
+        else if (args[0] === 2) { // option 2
+            player1 = "o";
+            player2 = "x";
+        }
+        startGame();
+
+    }
+}
+
+function reset() {
+    console.log("reset()...");
+    numberHumanPlayers = undefined;
+    numberComputerPlayers = undefined;
+    player1 = undefined;
+    player2 = undefined;
+    document.getElementById("option1").textContent = "vs. machine";
+    document.getElementById("option2").textContent = "vs. human";
+    document.getElementById("message").textContent = "Play again!";
+    grid = initializeGrid(m, n);
+    populateDomGrid(grid);
+}
+
+function startGame() {
+    console.log("startGame() loaded...");
+    populateDomGrid(grid);
+    if (checkGameWinner(grid) === undefined) {
+        if (player1 === "o") {
+            updateGrid(grid, "x", machineNextMove(grid, "x"));
+            populateDomGrid(grid);
+        }
+        else {
+        }
+        document.getElementById("message").textContent = "Your turn!";
+    }
+}
+
+function humanPlays(coordXY) {
+    let x = coordXY[0];
+    let y = coordXY[1];
+    if (grid[y][x] === undefined) {
+        updateGrid(grid, player1, coordXY);
+        populateDomGrid(grid, player1, coordXY);
+        if (checkGameWinner(grid) === undefined) {
+            updateGrid(grid, player2, machineNextMove(grid, player2));
+            populateDomGrid(grid);
+            if (checkGameWinner(grid) !== undefined) {
+                gameOver(grid);
+            }
+        }
+        else {
+            document.getElementById("message").textContent = "There is a winner!";
+            gameOver(grid);
+        }
+    }
+    else {
+    }
+}
+
+function gameOver(grid) {
+    let winner = checkGameWinner(grid);
+    if (winner === player1 && numberHumanPlayers === 1) {
+        winner = "You";
+    }
+    else if (winner === player1) { winner = "Computer (player 1)" }
+    else if (winner === player2) { winner = "Computer (player 2)" }
+    else if (winner === "tie") {
+        document.getElementById("message").textContent = "It's a tie!"
+    }
+    document.getElementById("message").textContent = winner + " win!";
+    reset()
 }

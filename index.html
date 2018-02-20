@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Tic-Tac-Toe Game</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="script.js"></script>
 </head>
 
 <body class="container">
@@ -13,29 +14,48 @@
 
     <section id="css-grid-wrap">
         <div class="grid" id="tttGrid">
-            <div class="grid-cell" id="xy00" onclick=""><span>x</span></div>
-            <div class="grid-cell" id="xy01" onclick=""><span>o</span></div>
-            <div class="grid-cell" id="xy02" onclick=""><span>x</span></div>
-            <div class="grid-cell" id="xy10" onclick=""><span>o</span></div>
-            <div class="grid-cell" id="xy11" onclick=""><span>x</span></div>
-            <div class="grid-cell" id="xy12" onclick=""><span>x</span></div>
-            <div class="grid-cell" id="xy20" onclick=""><span>o</span></div>
-            <div class="grid-cell" id="xy21" onclick=""><span>x</span></div>
-            <div class="grid-cell" id="xy22" onclick=""><span>o</span></div>
+            <div class="grid-cell" id="cell-xy00" onclick="humanPlays([0,0])">
+                <span id="content-xy00">x</span>
+            </div>
+            <div class="grid-cell" id="cell-xy10" onclick="humanPlays([1,0])">
+                <span id="content-xy10">o</span>
+            </div>
+            <div class="grid-cell" id="cell-xy20" onclick="humanPlays([2,0])">
+                <span id="content-xy20">x</span>
+            </div>
+            <div class="grid-cell" id="cell-xy01" onclick="humanPlays([0,1])">
+                <span id="content-xy01">o</span>
+            </div>
+            <div class="grid-cell" id="cell-xy11" onclick="humanPlays([1,1])">
+                <span id="content-xy11">x</span>
+            </div>
+            <div class="grid-cell" id="cell-xy21" onclick="humanPlays([2,1])">
+                <span id="content-xy21">x</span>
+            </div>
+            <div class="grid-cell" id="cell-xy02" onclick="humanPlays([0,2])">
+                <span id="content-xy02">o</span>
+            </div>
+            <div class="grid-cell" id="cell-xy12" onclick="humanPlays([1,2])">
+                <span id="content-xy12">x</span>
+            </div>
+            <div class="grid-cell" id="cell-xy22" onclick="humanPlays([2,2])">
+                <span id="content-xy22">o</span>
+            </div>
         </div>
     </section>
 
     <section id="menu-grid">
         <h3 id="message">Ready to start?</h3>
-        <p id="option1" onclick="">Option 1</p>
-        <p id="option2" onclick="">Option 2</p>
-        <p id="reset" onclick="">Back / Reboot</p>
+        <p id="option1" onclick="menu(1)">vs. machine</p>
+        <p id="option2" onclick="menu(2)">vs. human</p>
+        <p id="reset" onclick="reset()">Reboot</p>
     </section>
 
 
     <footer>
         Designed by
-        <a href="https://github.com/user883311" target="_blank">user883311</a> with vanilla JS.
+        <a href="https://github.com/user883311" target="_blank">user883311</a>
+        with vanilla JS.
     </footer>
 </body>
 
