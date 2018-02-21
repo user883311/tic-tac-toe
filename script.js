@@ -6,7 +6,8 @@ var grid = initializeGrid(m, n);
 var numberHumanPlayers; // 0, 1, 2
 var numberComputerPlayers = 2 - numberHumanPlayers; // 0, 1, 2
 var player1, player2; // "x", "o"
-var nowPlaying = false; 
+var nowPlaying = false;
+var whoseTurn = "x"; // the Xs always start first
 
 function promptUserXorO() {
     /*
@@ -520,15 +521,17 @@ function applyCreate2inRowStrategy(grid, XorO) {
 
 function menu(...args) {
     if (numberHumanPlayers === undefined) {
-        document.getElementById("option1").textContent = "x";
-        document.getElementById("option2").textContent = "o";
         if (args[0] === 1) {
             numberHumanPlayers = 1;
             numberComputerPlayers = 1;
+            document.getElementById("option1").textContent = "x";
+            document.getElementById("option2").textContent = "o";
+
         }
         else if (args[0] === 2) {
             numberHumanPlayers = 2;
             numberComputerPlayers = 0;
+            startGame();
         }
     }
     else if (player1 === undefined) {
@@ -541,7 +544,6 @@ function menu(...args) {
             player2 = "x";
         }
         startGame();
-
     }
 }
 
@@ -552,63 +554,85 @@ function reset() {
     player2 = undefined;
     document.getElementById("option1").textContent = "vs. machine";
     document.getElementById("option2").textContent = "vs. human";
+    document.getElementById("option1").classList.remove("invisible-text");
+    document.getElementById("option2").classList.remove("invisible-text");
     document.getElementById("message").textContent = "Play again!";
     grid = initializeGrid(m, n);
     populateDomGrid(grid);
 }
 
 function startGame() {
-    nowPlaying=true;
+    nowPlaying = true;
     populateDomGrid(grid);
     if (checkGameWinner(grid) === undefined) {
-        if (player1 === "o") {
-            updateGrid(grid, "x", machineNextMove(grid, "x"));
-            populateDomGrid(grid);
+        if (numberHumanPlayers === 1) {
+            if (player1 === "o") {
+                updateGrid(grid, "x", machineNextMove(grid, "x"));
+                populateDomGrid(grid);
+            }
+            document.getElementById("message").textContent = "Your turn!";
+
         }
-        else {
-        }
-        document.getElementById("message").textContent = "Your turn!";
+        else { document.getElementById("message").textContent = "X, you go first!"; }
+        document.getElementById("option1").classList.add("invisible-text");
+        document.getElementById("option2").classList.add("invisible-text");
     }
 }
+
 
 async function humanPlays(coordXY) {
     let x = coordXY[0];
     let y = coordXY[1];
-    if (grid[y][x] === undefined && nowPlaying === true) {
-        updateGrid(grid, player1, coordXY);
-        populateDomGrid(grid, player1, coordXY);
-        if (checkGameWinner(grid) === undefined) {
-            updateGrid(grid, player2, machineNextMove(grid, player2));
-            populateDomGrid(grid);
-            if (checkGameWinner(grid) !== undefined) {
-                gameOver(grid);
-            }
+
+    if (grid[y][x] === undefined && nowPlaying === true && checkGameWinner(grid) === undefined) {
+        if (numberHumanPlayers === 1) {
+            updateGrid(grid, player1, coordXY);
+            populateDomGrid(grid, player1, coordXY);
         }
-        else {
+        else if (numberHumanPlayers === 2) {
+            updateGrid(grid, whoseTurn, coordXY);
+            populateDomGrid(grid, whoseTurn, coordXY)
+        }
+
+        if (checkGameWinner(grid) !== undefined) {
             document.getElementById("message").textContent = "Game over!";
             await sleep(2000);
             gameOver(grid);
+        }
+        else {
+            if (numberHumanPlayers === 1) {
+                updateGrid(grid, player2, machineNextMove(grid, player2));
+                populateDomGrid(grid);
+                if (checkGameWinner(grid) !== undefined) {
+                    gameOver(grid);
+                }
+            }
+            else if (numberHumanPlayers === 2) {
+                whoseTurn = (whoseTurn === "x") ? "o" : "x";
+                if (checkGameWinner(grid) !== undefined) {
+                    gameOver(grid);
+                }
+            }
         }
     }
 }
 
 async function gameOver(grid) {
-    let winner = checkGameWinner(grid);
-    if (winner === player1 && numberHumanPlayers === 1) {
-        winner = "You";
+    nowPlaying = false;
+    var winner = checkGameWinner(grid);
+    if (numberHumanPlayers === 1) {
+        winner = (winner === player1) ? "You" : "Computer (" + player2 + ")";
         noTie();
     }
-    else if (winner === player1) { winner = "Computer (player 1)"; noTie() }
-    else if (winner === player2) { winner = "Computer (player 2)"; noTie() }
+    else if (numberHumanPlayers === 2) { noTie() }
     else if (winner === "tie") {
         document.getElementById("message").textContent = "It's a tie!"
     }
     await sleep(2000);
-    nowPlaying = false;
     reset()
 
     function noTie() {
-        document.getElementById("message").textContent = winner + " win!";
+        document.getElementById("message").textContent = winner + " wins!";
     }
 }
 

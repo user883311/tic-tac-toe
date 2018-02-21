@@ -75,6 +75,9 @@ a {
     cursor: pointer;
 }
 
+.invisible-text{
+    color: transparent;
+}
 
 /* FOOTER */
 footer{
